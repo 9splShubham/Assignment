@@ -12,9 +12,9 @@ import 'dart:io' as io;
 class DbHelper {
   late Database _db;
 
-  static const String DB_Name = 'MyData.db';
+  static const String DB_Name = 'MyDataBase.db';
   static const String Table_Product = 'products';
-  static const int Version = 21;
+  static const int Version = 11;
   static const String Prod_Id = 'id';
   static const String Prod_Title = 'title';
   static const String Prod_Price = 'price';
@@ -68,6 +68,13 @@ class DbHelper {
   Future<int> saveData(ProductModel product) async {
     var dbClient = await db;
     var res = await dbClient.insert(Table_Product, product.toJson());
+    return res;
+  }
+
+  Future<List<Map<String, dynamic>>> fetchDataFromDB() async {
+    var dbClient = await db;
+    var res = await dbClient.rawQuery('''SELECT * FROM $Table_Product''');
+
     return res;
   }
 
