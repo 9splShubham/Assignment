@@ -16,18 +16,17 @@ class ApiProvider {
     return response.body;
   }
 
-  Future getCart(String apiUrl) async {
+  Future postCart(String apiUrl) async {
     var url = Uri.parse(apiUrl);
-    var response = await http.get(url);
-    print('Response status: ${response.statusCode}');
+    var response = await http.post(url);
+    print('Response status post: ${response.statusCode}');
 
     return response.body;
   }
 
-/*
-  Future postMethod(String apiUrl) async {
+/*  Future getCart(String apiUrl) async {
     var url = Uri.parse(apiUrl);
-    var response = await http.post(url);
+    var response = await http.get(url);
     print('Response status: ${response.statusCode}');
 
     return response.body;

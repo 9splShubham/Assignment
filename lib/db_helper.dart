@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'package:assignment/api.dart';
-import 'package:assignment/model/cart_model.dart';
-import 'package:http/http.dart' as http;
 import 'package:assignment/model/model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -71,17 +69,36 @@ class DbHelper {
     return res;
   }
 
-  Future<List<Map<String, dynamic>>> fetchDataFromDB() async {
+  Future<List<Map<String, Object?>>> query() async {
     var dbClient = await db;
     var res = await dbClient.rawQuery('''SELECT * FROM $Table_Product''');
-
     return res;
   }
 
-/*  Future<int> saveCart(CartModel cart) async {
+  Future<List<Map<String, dynamic>>> fetchDataFromDB() async {
     var dbClient = await db;
-    var res = await dbClient.insert(Table_Cart, cart.toJson());
+    var res = await dbClient.rawQuery('''SELECT * FROM $Table_Product''');
     return res;
+  }
+
+  Future<ProductModel> getProduct(int productId) async {
+    final response = await ApiProvider()
+        .getMethod('https://fakestoreapi.com/products/$Prod_Id');
+    if (response.statusCode == 200) {
+      return ProductModel.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load product');
+    }
+  }
+
+/*  Future<void> addToCart(CartModel cartItem) async {
+    final response = await ApiProvider()
+        .postCart('https://fakestoreapi.com/carts', body: jsonEncode(cartItem));
+    if (response.statusCode == 200) {
+      print('Item added to cart');
+    } else {
+      throw Exception('Failed to add item to cart');
+    }
   }*/
 
   Future<List> getDataFromApi() async {
@@ -96,5 +113,16 @@ class DbHelper {
       print("----------getDataFromApi");
     });
     return models;
+  }
+
+  Future<ProductModel> getProd(int userId) async {
+    var dbClient = await db;
+    var res = await dbClient.rawQuery("SELECT * FROM $Table_Product WHERE "
+        "$Prod_Id = '$userId'");
+
+    if (res.length > 0) {
+      return ProductModel.fromJson(res.first);
+    }
+    return ProductModel();
   }
 }

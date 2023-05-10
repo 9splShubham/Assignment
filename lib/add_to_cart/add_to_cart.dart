@@ -1,9 +1,9 @@
 import 'dart:convert';
-
 import 'package:assignment/api.dart';
+import 'package:assignment/core/api_links.dart';
+import 'package:assignment/core/app_string.dart';
 import 'package:assignment/db_helper.dart';
 import 'package:assignment/model/cart_model.dart';
-import 'package:assignment/model/model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -17,7 +17,7 @@ class AddToCart extends StatefulWidget {
 class _AddToCartState extends State<AddToCart> {
   List<CartModel> mCartModel = [];
 
-  var dbHelper;
+  late DbHelper dbHelper;
 
   @override
   void initState() {
@@ -27,21 +27,18 @@ class _AddToCartState extends State<AddToCart> {
   }
 
   void initData() async {
-    var response =
-        await ApiProvider().getCart('https://fakestoreapi.com/carts');
+    var response = await ApiProvider().getMethod(Api.textCartAPI);
     mCartModel = List<CartModel>.from(
         jsonDecode(response).map((model) => CartModel.fromJson(model)));
 
-    setState(() {
-      print('product---------${mCartModel.length}');
-    });
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add To Cart"),
+        title: Text(AppString.textAddToCart),
       ),
       body: Scaffold(
         body: Padding(
@@ -57,7 +54,7 @@ class _AddToCartState extends State<AddToCart> {
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
                     CartModel item = mCartModel[index];
-                    print("----------------${item.id}");
+                    print("----------------${item.userId}");
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
@@ -70,10 +67,10 @@ class _AddToCartState extends State<AddToCart> {
                             SizedBox(
                               width: 10,
                             ),
-                            Text(item.id.toString()),
                             Text(item.userId.toString()),
                             Text(item.date.toString()),
                             Text(item.products.toString()),
+                            Text(item.iV.toString()),
                           ],
                         ),
                       ),
