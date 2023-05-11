@@ -4,7 +4,8 @@ import 'package:assignment/api.dart';
 import 'package:assignment/core/api_links.dart';
 import 'package:assignment/core/app_string.dart';
 import 'package:assignment/db_helper.dart';
-import 'package:assignment/model/model.dart';
+import 'package:assignment/model/cart_model.dart';
+import 'package:assignment/model/product_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -59,12 +60,41 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {});
   }
 
+/*  void postCart() async {
+    var response = await http.post(
+      Uri.parse("https://fakestoreapi.com/carts"),
+      body: {
+        "title": "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
+        "price": 109.95.toString(),
+        "description":
+            "Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday",
+        "category": "men's clothing",
+        "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg"
+      },
+    );
+    print(response.body);
+    setState(() {});
+  }*/
+
   void storeData(int index) async {
     ProductModel pModel = mProductModel[index];
     dbHelper = DbHelper();
     await dbHelper.saveData(pModel).then((product) {}).catchError((error) {});
     setState(() {});
   }
+
+  void getProdData() async {
+    dbHelper = DbHelper();
+    mProductModel = await dbHelper.getProd(5);
+    print("Get Prod Data");
+    setState(() {});
+  }
+
+/*  void dd()async{
+    dbHelper = DbHelper();
+    await dbHelper.fetchDataFromDB().then((save){
+    });
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -129,6 +159,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                         ),
                                         ElevatedButton(
                                             onPressed: () {
+                                              /* postCart();*/
+                                              /* getProdData();*/
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(

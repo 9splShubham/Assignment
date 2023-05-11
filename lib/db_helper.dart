@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:assignment/api.dart';
-import 'package:assignment/model/model.dart';
+import 'package:assignment/model/cart_model.dart';
+import 'package:assignment/model/product_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
@@ -69,7 +70,7 @@ class DbHelper {
     return res;
   }
 
-  Future<List<Map<String, Object?>>> query() async {
+  Future<List<Map<String, dynamic>>> getProdData() async {
     var dbClient = await db;
     var res = await dbClient.rawQuery('''SELECT * FROM $Table_Product''');
     return res;
@@ -77,8 +78,10 @@ class DbHelper {
 
   Future<List<Map<String, dynamic>>> fetchDataFromDB() async {
     var dbClient = await db;
-    var res = await dbClient.rawQuery('''SELECT * FROM $Table_Product''');
-    return res;
+    final List<Map<String, dynamic>> maps =
+        await dbClient.rawQuery('''SELECT * FROM $Table_Product''');
+    print("---------${maps}");
+    return maps;
   }
 
   Future<ProductModel> getProduct(int productId) async {
@@ -115,14 +118,18 @@ class DbHelper {
     return models;
   }
 
-  Future<ProductModel> getProd(int userId) async {
+  Future<List<ProductModel>> getProd(int userId) async {
     var dbClient = await db;
     var res = await dbClient.rawQuery("SELECT * FROM $Table_Product WHERE "
         "$Prod_Id = '$userId'");
 
-    if (res.length > 0) {
-      return ProductModel.fromJson(res.first);
+    try {
+      List<ProductModel> mProductModel = List<ProductModel>.from(
+          res.map((model) => ProductModel.fromJson(model)));
+
+      return mProductModel;
+    } catch (e) {
+      return [];
     }
-    return ProductModel();
   }
 }
