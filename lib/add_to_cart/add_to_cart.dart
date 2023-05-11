@@ -17,33 +17,6 @@ class AddToCart extends StatefulWidget {
 }
 
 class _AddToCartState extends State<AddToCart> {
-  List<CartModel> mCartModel = [];
-  ProductModel mProductModel = ProductModel();
-  var mCartProdModel = {};
-
-/*  late Future<List<Map<String, dynamic>>> _futureData;*/
-
-  late DbHelper dbHelper;
-
-  @override
-  void initState() {
-    initData();
-    dbHelper = DbHelper();
-    /*  _futureData = dbHelper.fetchDataFromDB();*/
-    super.initState();
-  }
-
-  void initData() async {
-    var response = await ApiProvider().getMethod(Api.textCartAPI);
-    mCartModel = List<CartModel>.from(
-        jsonDecode(response).map((model) => CartModel.fromJson(model)));
-
-    mCartProdModel.addAll(response);
-    mCartProdModel.addAll(DbHelper().fetchDataFromDB() as Map);
-
-    print("-----------------${mCartProdModel}");
-    setState(() {});
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,44 +32,128 @@ class _AddToCartState extends State<AddToCart> {
               SizedBox(
                 height: 30,
               ),
-              /* FutureBuilder<List<Map<String, dynamic>>>(
-                future: _futureData,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(width: 3, color: Colors.black),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Expanded(
-                              child: Column(
-                                children: [
-                                  Text("${snapshot.data![index]['title']}"),
-                                  Text("${snapshot.data![index]['price']}"),
-                                  Text(
-                                      "${snapshot.data![index]['description']}"),
-                                ],
+              
+               Expanded(
+                 child: FutureBuilder<List<CartProdModel>>(
+                  future: DbHelper().getJoinedData(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index)
+                        {
+                          print("-------${snapshot.data![index].title}");
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(width: 3, color: Colors.black),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      height: 70,
+                                      width: 70,
+                                      child: Image.network(
+                                          "${snapshot.data![index].image}",
+
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                              "ID : ${snapshot.data![index].id}"),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                              "User ID : ${snapshot.data![index].userId}"),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text("${snapshot.data![index].title}"),
+
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                              "Date : ${snapshot.data![index].date}"),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    return CircularProgressIndicator();
-                  }
-                },
-              )*/
-              ListView.builder(
+                          );
+
+                         /*   Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(width: 3, color: Colors.black),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Expanded(
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+
+                                        Expanded(
+                                          child: Column(
+                                            children: [
+                                              Image.network("${snapshot.data![index].image}",height: 40,width: 40,),
+
+                                              Text("${snapshot.data![index].title}"),
+                                              Text("${snapshot.data![index].date}"),
+
+
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );*/
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return CircularProgressIndicator();
+                    }
+                  },
+              ),
+               )
+            /*  ListView.builder(
                   itemCount: mCartModel.length,
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
@@ -122,7 +179,7 @@ class _AddToCartState extends State<AddToCart> {
                         ),
                       ),
                     );
-                  })
+                  })*/
             ],
           ),
         ),

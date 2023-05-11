@@ -7,6 +7,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:path/path.dart';
 import 'dart:io' as io;
+import 'package:http/http.dart' as http;
 
 class DbHelper {
   late Database _db;
@@ -132,4 +133,72 @@ class DbHelper {
       return [];
     }
   }
+
+//NEW
+
+  Future<List<CartModel>> fetchCart() async {
+
+    final response = await http.get(Uri.parse('https://fakestoreapi.com/carts'));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => CartModel(
+        id: json['id'],
+        userId:json['userId'],
+        date: json['date'],
+        /*products: json['products'],*/
+      )).toList();
+    } else {
+      throw Exception('Failed to fetch products');
+    }
+  }
+
+  Future<List<ProductModel>> fetchProd() async {
+    var dbClient = await db;
+    List<Map<String, dynamic>> maps =  await dbClient.rawQuery('''SELECT * FROM $Table_Product''');
+    List<ProductModel> product = [];
+    for (var map in maps) {
+      ProductModel prod = ProductModel(
+        id: map['id'],
+        title: map['title'],
+      price:map['price'],
+        description: map['description'],
+        image: map['image'],
+
+      );
+      product.add(prod);
+    }
+    return product;
+  }
+  Future<List<CartProdModel>> getJoinedData() async {
+    List<CartModel> mCartModel = await fetchCart();
+    List<ProductModel> mProductModel = await fetchProd();
+    List<CartProdModel> mCartProdModel = [];
+
+
+    for (var apiCart in mCartModel) {
+      ProductModel? dbBook  = mProductModel.firstWhere(
+            (book) => book.id == apiCart.id
+      );
+      if (dbBook != null) {
+        CartProdModel book = CartProdModel(
+          id: apiCart.id!,
+            title: dbBook.title,
+         /* price: dbBook.price!,*/
+          description: dbBook.description,
+          image: dbBook.image,
+          userId: apiCart.userId!,
+          date: apiCart.date,
+          /*products: apiCart.products,*/
+
+
+        );
+        mCartProdModel.add(book);
+      }
+    }
+    return mCartProdModel;
+  }
+
+
+
+
 }
