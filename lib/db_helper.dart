@@ -23,13 +23,6 @@ class DbHelper {
   static const String Prod_Image = 'image';
   static const String Prod_Rating = 'rating';
 
-  // CART
-/*  static const String Table_Cart = 'cart';
-  static const String Cart_ID = 'cartId';
-  static const String Cart_User_ID = 'cartProdId';
-  static const String Cart_Date = 'cartImage';
-  static const String Cart_Products = 'cartTitle';*/
-
   Future<Database> get db async {
     /* if (_db != null) {
       return _db;
@@ -55,13 +48,6 @@ class DbHelper {
         " $Prod_Image TEXT,"
         " $Prod_Rating TEXT "
         ")");
-
-/*    await db.execute("CREATE TABLE $Table_Cart ("
-        " $Cart_ID INTEGER PRIMARY KEY, "
-        " $Cart_User_ID INTEGER PRIMARY KEY, "
-        " $Cart_Date INTEGER, "
-        " $Cart_Products INTEGER"
-        ")");*/
   }
   //SAVE DATA
 
@@ -93,16 +79,6 @@ class DbHelper {
       throw Exception('Failed to load product');
     }
   }
-
-/*  Future<void> addToCart(CartModel cartItem) async {
-    final response = await ApiProvider()
-        .postCart('https://fakestoreapi.com/carts', body: jsonEncode(cartItem));
-    if (response.statusCode == 200) {
-      print('Item added to cart');
-    } else {
-      throw Exception('Failed to add item to cart');
-    }
-  }*/
 
   Future<List> getDataFromApi() async {
     final response =

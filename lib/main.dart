@@ -40,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<ProductModel> mProductModel = [];
 
   late DbHelper dbHelper;
-
+  late List<Map<String, dynamic>> snapshot;
   @override
   void initState() {
     initData();
@@ -56,6 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
     for (int i = 0; i < mProductModel.length; i++) {
       storeData(i);
     }
+    snapshot = await DbHelper().fetchDataFromDB();
     setState(() {});
   }
 
@@ -74,85 +75,77 @@ class _MyHomePageState extends State<MyHomePage> {
         elevation: 0,
       ),
       body: Scaffold(
-        body: FutureBuilder<List<Map<String, dynamic>>>(
-          future: DbHelper().fetchDataFromDB(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  itemCount: snapshot.data!.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(width: 3, color: Colors.black),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            children: [
-                              Container(
-                                height: 70,
-                                width: 70,
-                                child: Image(
-                                  image: CachedNetworkImageProvider(
-                                    "${snapshot.data![index]['image']}",
+        body: (snapshot.isNotEmpty)
+            ? ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: snapshot.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 3, color: Colors.black),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 70,
+                              width: 70,
+                              child: Image(
+                                image: CachedNetworkImageProvider(
+                                  "${snapshot[index]['image']}",
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Text("${snapshot[index]['title']}"),
+                                  const SizedBox(
+                                    height: 10,
                                   ),
-                                ),
+                                  Text("${snapshot[index]['price']}"),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text("${snapshot[index]['description']}"),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const AddToCart()));
+                                          },
+                                          child: const Text(
+                                              AppString.textAddToCart)),
+                                    ],
+                                  )
+                                ],
                               ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Text("${snapshot.data![index]['title']}"),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text("${snapshot.data![index]['price']}"),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                        "${snapshot.data![index]['description']}"),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    Row(
-                                      children: [
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
-                                        ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const AddToCart()));
-                                            },
-                                            child: const Text(
-                                                AppString.textAddToCart)),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
+                            )
+                          ],
                         ),
                       ),
-                    );
-                  });
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
+                    ),
+                  );
+                })
+            : const Center(child: CircularProgressIndicator()),
       ),
     );
   }
