@@ -4,7 +4,6 @@ import 'package:assignment/api.dart';
 import 'package:assignment/core/api_links.dart';
 import 'package:assignment/core/app_string.dart';
 import 'package:assignment/db_helper.dart';
-import 'package:assignment/model/cart_model.dart';
 import 'package:assignment/model/product_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
@@ -60,22 +59,6 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {});
   }
 
-/*  void postCart() async {
-    var response = await http.post(
-      Uri.parse("https://fakestoreapi.com/carts"),
-      body: {
-        "title": "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
-        "price": 109.95.toString(),
-        "description":
-            "Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday",
-        "category": "men's clothing",
-        "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg"
-      },
-    );
-    print(response.body);
-    setState(() {});
-  }*/
-
   void storeData(int index) async {
     ProductModel pModel = mProductModel[index];
     dbHelper = DbHelper();
@@ -83,24 +66,11 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {});
   }
 
-  void getProdData() async {
-    dbHelper = DbHelper();
-    mProductModel = await dbHelper.getProd(5);
-    print("Get Prod Data");
-    setState(() {});
-  }
-
-/*  void dd()async{
-    dbHelper = DbHelper();
-    await dbHelper.fetchDataFromDB().then((save){
-    });
-  }*/
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppString.textAssignment),
+        title: const Text(AppString.textAssignment),
         elevation: 0,
       ),
       body: Scaffold(
@@ -133,42 +103,40 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
                               Expanded(
                                 child: Column(
                                   children: [
                                     Text("${snapshot.data![index]['title']}"),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Text("${snapshot.data![index]['price']}"),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     Text(
                                         "${snapshot.data![index]['description']}"),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 20,
                                     ),
                                     Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 20,
                                         ),
                                         ElevatedButton(
                                             onPressed: () {
-                                              /* postCart();*/
-                                              /* getProdData();*/
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          AddToCart()));
+                                                          const AddToCart()));
                                             },
-                                            child:
-                                                Text(AppString.textAddToCart)),
+                                            child: const Text(
+                                                AppString.textAddToCart)),
                                       ],
                                     )
                                   ],
@@ -181,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                   });
             } else {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
           },
         ),
